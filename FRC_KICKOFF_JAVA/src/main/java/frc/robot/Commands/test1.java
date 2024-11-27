@@ -7,9 +7,9 @@ package frc.robot.Commands;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 
-public class test1 extends Command {
+public class Test1 extends Command {
   /** Creates a new test1. */
-  public test1() {
+  public Test1() {
     // Use addRequirements() here to declare subsystem dependencies.
   }
 

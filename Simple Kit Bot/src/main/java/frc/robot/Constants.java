@@ -22,4 +22,7 @@ public class Constants {
     public static final double LEFT_KD = 0;
     public static final double RIGHT_KD = 0;
     public static final double RIGHT_KP = 0.6;
-    public static final double RIGHT_KI = 0;}
+    public static final double RIGHT_KI = 0;
+
+}
+

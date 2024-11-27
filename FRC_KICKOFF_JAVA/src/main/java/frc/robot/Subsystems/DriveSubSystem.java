@@ -1,5 +1,7 @@
 package frc.robot.Subsystems;
 
+import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.FunctionalCommand;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj.motorcontrol.Spark;
 import edu.wpi.first.wpilibj.ADIS16470_IMU;
@@ -31,6 +33,7 @@ public class DriveSubSystem extends SubsystemBase {
 
     private final PIDController leftController;
     private final PIDController rightController;
+    private final PIDController distanceController;
 
     private final SimpleMotorFeedforward leftfeFeedforward;
     private final SimpleMotorFeedforward rightfeFeedforward;
@@ -60,6 +63,7 @@ public class DriveSubSystem extends SubsystemBase {
 
         leftController = new PIDController(Constants.LEFT_KP, Constants.LEFT_KI, Constants.LEFT_KD);
         rightController = new PIDController(Constants.RIGHT_KP, Constants.RIGHT_KI, Constants.RIGHT_KD);
+        distanceController=new PIDController(0.0,0.0,0.0);     
 
         leftfeFeedforward = new SimpleMotorFeedforward(0.1, 0.3);
         rightfeFeedforward = new SimpleMotorFeedforward(0.1, 0.3);
@@ -105,9 +109,9 @@ public class DriveSubSystem extends SubsystemBase {
         rightController.setSetpoint(setpoint);
     }
 
-    public void arcadeDrivePID(double forwardSpeed, double rotationSpeed) {
-        double setFwdSpeed = MathUtil.applyDeadband(forwardSpeed, 0.1);
-        double setRotSpeed = MathUtil.applyDeadband(rotationSpeed, 0.1);
+    public void arcadeDrivePID(double forwardSpeed, double rotationSpeed,double deadband) {
+        double setFwdSpeed = MathUtil.applyDeadband(forwardSpeed, deadband);
+        double setRotSpeed = MathUtil.applyDeadband(rotationSpeed, deadband);
         forwardSpeed = speedLimiter.calculate(setFwdSpeed);
         if ((Math.abs(forwardSpeed) + Math.abs(rotationSpeed) > 1)) {
             setFwdSpeed = forwardSpeed / (Math.abs(forwardSpeed) + Math.abs(rotationSpeed));
@@ -204,6 +208,13 @@ public class DriveSubSystem extends SubsystemBase {
         SmartDashboard.putNumber("right setpoint", rightController.getSetpoint());
         SmartDashboard.putNumber("left output", leftController.getPositionError());
 
+    }
+
+    public Command DriveStraightForDistance(double distance){
+        return  new FunctionalCommand(()->distanceController.setSetpoint(distance+(leftEncoder.getDistance()+rightEncoder.getDistance())/2),
+                                      ()->this.arcadeDrivePID(distanceController.calculate((leftEncoder.getDistance()+rightEncoder.getDistance())/2),0,0 ),
+                                      null,
+                                      ()->distanceController.atSetpoint() );
     }
 
 }

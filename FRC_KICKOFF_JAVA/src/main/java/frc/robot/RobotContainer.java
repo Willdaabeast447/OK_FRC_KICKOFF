@@ -12,17 +12,18 @@ import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.Commands.ArcadeDrivePID;
-import frc.robot.Commands.test1;
+import frc.robot.Commands.Test1;
 import frc.robot.Subsystems.DriveSubSystem;
 
 public class RobotContainer {
   private final DriveSubSystem drive= new DriveSubSystem();
   private final XboxController xboxController_1= new XboxController(0);
   private final SendableChooser<Command> autoChooser;
+  private final Command test=new Test1();
 
  
   public RobotContainer() {
-    NamedCommands.registerCommand("autoBalance",new test1());
+    NamedCommands.registerCommand("autoBalance",test);
     autoChooser = AutoBuilder.buildAutoChooser();
     SmartDashboard.putData("Auto Chooser", autoChooser);
     configureBindings();

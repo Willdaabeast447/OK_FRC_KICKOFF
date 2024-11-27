@@ -31,7 +31,7 @@ public class ArcadeDrivePID extends Command {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    drive.arcadeDrivePID(vel.getAsDouble(), rot.getAsDouble());
+    drive.arcadeDrivePID(vel.getAsDouble(), rot.getAsDouble(),0.1);
   }
 
   // Called once the command ends or is interrupted.
