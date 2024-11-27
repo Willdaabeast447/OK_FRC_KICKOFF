@@ -13,13 +13,14 @@ public class RobotContainer {
   private final DriveSubSystem drive = new DriveSubSystem();
   private final XboxController xboxController_0 = new XboxController(0);
 
+  Command arcadeDrive=drive.arcadeDriveCommand(()->xboxController_0.getLeftY(),()->xboxController_0.getLeftX());
+
   public RobotContainer() {
     configureBindings();
   }
 
   private void configureBindings() {
-    drive.setDefaultCommand(
-        new ArcadeDrive(() -> xboxController_0.getLeftY(), () -> xboxController_0.getLeftX(), drive));
+    drive.setDefaultCommand(arcadeDrive);
   }
 
   public Command getAutonomousCommand() {

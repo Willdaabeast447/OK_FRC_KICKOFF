@@ -1,5 +1,6 @@
 package frc.robot.Subsystems;
 
+import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj.motorcontrol.Spark;
 import edu.wpi.first.wpilibj.ADIS16470_IMU;
@@ -12,6 +13,9 @@ import edu.wpi.first.math.kinematics.DifferentialDriveWheelPositions;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.DifferentialDriveWheelSpeeds;
+
+import java.util.function.DoubleSupplier;
+
 import edu.wpi.first.math.filter.SlewRateLimiter;
 
 public class DriveSubSystem extends SubsystemBase {
@@ -92,6 +96,11 @@ public class DriveSubSystem extends SubsystemBase {
         // Update odometry based on encoder readings and IMU
         odometry.update(new Rotation2d(imu.getAngle()), leftEncoder.getDistance(), rightEncoder.getDistance());
 
+    }
+
+    public Command arcadeDriveCommand(DoubleSupplier forwardVel,DoubleSupplier rotDoubleSupplier)
+    {
+        return run(()->{this.arcadeDrive(forwardVel.getAsDouble(), rotDoubleSupplier.getAsDouble());});
     }
 
 }

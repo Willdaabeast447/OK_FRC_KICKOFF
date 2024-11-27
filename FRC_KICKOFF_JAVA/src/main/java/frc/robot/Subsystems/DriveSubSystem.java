@@ -40,16 +40,13 @@ public class DriveSubSystem extends SubsystemBase {
     private final DifferentialDriveKinematics kinematics;
 
     private final SlewRateLimiter speedLimiter;
-    private boolean enablePID;
     private double leftOutput = 0;
     private double rightOutput = 0;
 
-    private double calculatespeed = 0;
-    private double previous_distance = 0;
+   
 
     public DriveSubSystem() {
 
-        enablePID = false;
         leftMotor = new Spark(Constants.LEFT_MOTOR_PORT);
         rightMotor = new Spark(Constants.RIGHT_MOTOR_PORT);
         leftMotor.setInverted(false);
@@ -84,7 +81,6 @@ public class DriveSubSystem extends SubsystemBase {
     }
 
     public void arcadeDrive(double forwardSpeed, double rotationSpeed) {
-        enablePID = false;
         // Apply speed limiter
         double setFwdSpeed = forwardSpeed;
         double setRotSpeed = rotationSpeed;
@@ -110,7 +106,6 @@ public class DriveSubSystem extends SubsystemBase {
     }
 
     public void arcadeDrivePID(double forwardSpeed, double rotationSpeed) {
-        this.enablePID = true;// Apply speed limiter
         double setFwdSpeed = MathUtil.applyDeadband(forwardSpeed, 0.1);
         double setRotSpeed = MathUtil.applyDeadband(rotationSpeed, 0.1);
         forwardSpeed = speedLimiter.calculate(setFwdSpeed);
@@ -123,9 +118,14 @@ public class DriveSubSystem extends SubsystemBase {
         double setVelLeft = (setFwdSpeed + setRotSpeed) * Constants.MAX_WHEEL_SPEED;
         double setVelRight = (setFwdSpeed - setRotSpeed) * Constants.MAX_WHEEL_SPEED;
 
+        if (setVelLeft!=leftController.getSetpoint())
+        {
         leftController.setSetpoint(setVelLeft);
+        }
+        if (setVelRight!=rightController.getSetpoint())
+        {
         rightController.setSetpoint(setVelRight);
-
+        }   
         leftOutput = leftController.calculate(leftEncoder.getRate()) + leftfeFeedforward.calculate(setVelLeft);
         rightOutput = rightController.calculate(rightEncoder.getRate()) + rightfeFeedforward.calculate(setVelRight);
 
@@ -167,7 +167,6 @@ public class DriveSubSystem extends SubsystemBase {
 
     private void setChassisSpeedsPID(ChassisSpeeds speeds) {
 
-        enablePID = true;
         DifferentialDriveWheelSpeeds setspeeds = kinematics.toWheelSpeeds(speeds);
         if (Math.abs(setspeeds.leftMetersPerSecond) > 1.5 || Math.abs(setspeeds.rightMetersPerSecond) > 1.5) {
             leftMotorSetPID(0);
